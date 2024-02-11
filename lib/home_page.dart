@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key}) : super(key: key);
-
-
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -35,13 +33,15 @@ class _HomePageState extends State<HomePage> {
                     children: <Widget>[
                       const Text(
                         'Team X',
-                        style: TextStyle(fontSize: 20,
+                        style: TextStyle(
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
                       ),
                       Text(
                         xScore.toString(),
-                        style: const TextStyle(fontSize: 20,color: Colors.white),
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     ],
                   ),
@@ -51,13 +51,15 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      const Text('Team O', style: TextStyle(fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)
-                      ),
+                      const Text('Team O',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
                       Text(
                         oScore.toString(),
-                        style: const TextStyle(fontSize: 20,color: Colors.white),
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     ],
                   ),
@@ -84,7 +86,8 @@ class _HomePageState extends State<HomePage> {
                         child: Center(
                           child: Text(
                             displayElement[index],
-                            style: const TextStyle(color: Colors.white, fontSize: 35),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 35),
                           ),
                         ),
                       ),
@@ -94,15 +97,17 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ElevatedButton(
-                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
-                    onPressed: _clearScoreBoard,
-                    child: const Text("Clear Score Board"),
-                  ),
-                ],
-              ))
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.red)),
+                onPressed: _clearScoreBoard,
+                child: const Text("Clear Score Board"),
+              ),
+            ],
+          ))
         ],
       ),
     );
@@ -124,7 +129,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _checkWinner() {
-
     // Checking rows
     if (displayElement[0] == displayElement[1] &&
         displayElement[0] == displayElement[2] &&
