@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:tic_tac_toe/home_page_helper.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  /// 1st player is O
   bool oTurn = true;
 
-// 1st player is O
   List<String> displayElement = ['', '', '', '', '', '', '', '', ''];
   int oScore = 0;
   int xScore = 0;
@@ -19,50 +20,20 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue[900],
+      backgroundColor: Colors.lightBlue.shade900,
       body: Column(
-        children: <Widget>[
+        children: [
           Expanded(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Text(
-                        'Team X',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                      Text(
-                        xScore.toString(),
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ],
-                  ),
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                HomePageHelper.buildScoreBoardItem(
+                  teamName: 'Team X',
+                  teamScore: xScore,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Text('Team O',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white)),
-                      Text(
-                        oScore.toString(),
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ],
-                  ),
+                HomePageHelper.buildScoreBoardItem(
+                  teamName: 'Team O',
+                  teamScore: oScore,
                 ),
               ],
             ),
@@ -74,20 +45,22 @@ class _HomePageState extends State<HomePage> {
               child: GridView.builder(
                   itemCount: 9,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3),
-                  itemBuilder: (BuildContext context, int index) {
+                    crossAxisCount: 3,
+                  ),
+                  itemBuilder: (_, index) {
                     return GestureDetector(
-                      onTap: () {
-                        _tapped(index);
-                      },
+                      onTap: () => _onTapped(index),
                       child: Container(
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white)),
+                          border: Border.all(color: Colors.white),
+                        ),
                         child: Center(
                           child: Text(
                             displayElement[index],
                             style: const TextStyle(
-                                color: Colors.white, fontSize: 35),
+                              color: Colors.white,
+                              fontSize: 35,
+                            ),
                           ),
                         ),
                       ),
@@ -95,25 +68,18 @@ class _HomePageState extends State<HomePage> {
                   }),
             ),
           ),
-          Expanded(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.red)),
-                onPressed: _clearScoreBoard,
-                child: const Text("Clear Score Board"),
-              ),
-            ],
-          ))
         ],
       ),
+      persistentFooterButtons: [
+        HomePageHelper.buildClearScoreBoardButton(
+          context: context,
+          clearScoreBoard: _clearScoreBoard,
+        ),
+      ],
     );
   }
 
-  void _tapped(int index) {
+  void _onTapped(int index) {
     setState(() {
       if (oTurn && displayElement[index] == '') {
         displayElement[index] = 'O';
@@ -124,84 +90,98 @@ class _HomePageState extends State<HomePage> {
       }
 
       oTurn = !oTurn;
-      _checkWinner();
+      _checkWinner.call();
     });
   }
 
   void _checkWinner() {
-    // Checking rows
-    if (displayElement[0] == displayElement[1] &&
-        displayElement[0] == displayElement[2] &&
-        displayElement[0] != '') {
-      _showWinDialog(displayElement[0]);
+    /// Checking rows
+    if (displayElement[0] != '' &&
+        displayElement[0] == displayElement[1] &&
+        displayElement[0] == displayElement[2]) {
+      _showWinDialog.call(displayElement[0]);
     }
-    if (displayElement[3] == displayElement[4] &&
-        displayElement[3] == displayElement[5] &&
-        displayElement[3] != '') {
-      _showWinDialog(displayElement[3]);
+    if (displayElement[3] != '' &&
+        displayElement[3] == displayElement[4] &&
+        displayElement[3] == displayElement[5]) {
+      _showWinDialog.call(displayElement[3]);
     }
-    if (displayElement[6] == displayElement[7] &&
-        displayElement[6] == displayElement[8] &&
-        displayElement[6] != '') {
-      _showWinDialog(displayElement[6]);
-    }
-
-    // Checking Column
-    if (displayElement[0] == displayElement[3] &&
-        displayElement[0] == displayElement[6] &&
-        displayElement[0] != '') {
-      _showWinDialog(displayElement[0]);
-    }
-    if (displayElement[1] == displayElement[4] &&
-        displayElement[1] == displayElement[7] &&
-        displayElement[1] != '') {
-      _showWinDialog(displayElement[1]);
-    }
-    if (displayElement[2] == displayElement[5] &&
-        displayElement[2] == displayElement[8] &&
-        displayElement[2] != '') {
-      _showWinDialog(displayElement[2]);
+    if (displayElement[6] != '' &&
+        displayElement[6] == displayElement[7] &&
+        displayElement[6] == displayElement[8]) {
+      _showWinDialog.call(displayElement[6]);
     }
 
-    // Checking Diagonal
-    if (displayElement[0] == displayElement[4] &&
-        displayElement[0] == displayElement[8] &&
-        displayElement[0] != '') {
-      _showWinDialog(displayElement[0]);
+    /// Checking Column
+    if (displayElement[0] != '' &&
+        displayElement[0] == displayElement[3] &&
+        displayElement[0] == displayElement[6]) {
+      _showWinDialog.call(displayElement[0]);
     }
-    if (displayElement[2] == displayElement[4] &&
-        displayElement[2] == displayElement[6] &&
-        displayElement[2] != '') {
-      _showWinDialog(displayElement[2]);
+    if (displayElement[1] != '' &&
+        displayElement[1] == displayElement[4] &&
+        displayElement[1] == displayElement[7]) {
+      _showWinDialog.call(displayElement[1]);
+    }
+    if (displayElement[2] != '' &&
+        displayElement[2] == displayElement[5] &&
+        displayElement[2] == displayElement[8]) {
+      _showWinDialog.call(displayElement[2]);
+    }
+
+    /// Checking Diagonal
+    if (displayElement[0] != '' &&
+        displayElement[0] == displayElement[4] &&
+        displayElement[0] == displayElement[8]) {
+      _showWinDialog.call(displayElement[0]);
+    }
+    if (displayElement[2] != '' &&
+        displayElement[2] == displayElement[4] &&
+        displayElement[2] == displayElement[6]) {
+      _showWinDialog.call(displayElement[2]);
     } else if (filledBoxes == 9) {
-      _showDrawDialog();
+      _showDrawDialog.call();
     }
   }
 
   void _showWinDialog(String winner) {
+    winner == 'O' ? oScore++ : xScore++;
     showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("\" " + winner + " \" is Winner!!!"),
+            backgroundColor: Colors.green,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+            ),
+            title: Text(
+              'Congratulations !!!',
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: MediaQuery.sizeOf(context).width * 0.08,
+              ),
+            ),
+            content: Text(
+              "\" $winner \" is Winner!!!",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: MediaQuery.sizeOf(context).width * 0.05,
+              ),
+            ),
+            actionsAlignment: MainAxisAlignment.center,
             actions: [
               ElevatedButton(
                 child: const Text("Play Again"),
                 onPressed: () {
                   _clearBoard();
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
               )
             ],
           );
         });
-
-    if (winner == 'O') {
-      oScore++;
-    } else if (winner == 'X') {
-      xScore++;
-    }
   }
 
   void _showDrawDialog() {
@@ -210,13 +190,24 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Draw"),
+            backgroundColor: Colors.grey,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+            ),
+            title: Text(
+              "Draw",
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: MediaQuery.sizeOf(context).width * 0.05,
+              ),
+            ),
+            actionsAlignment: MainAxisAlignment.center,
             actions: [
               ElevatedButton(
                 child: const Text("Play Again"),
                 onPressed: () {
                   _clearBoard();
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
               )
             ],
@@ -229,19 +220,18 @@ class _HomePageState extends State<HomePage> {
       for (int i = 0; i < 9; i++) {
         displayElement[i] = '';
       }
+      filledBoxes = 0;
     });
-
-    filledBoxes = 0;
   }
 
   void _clearScoreBoard() {
     setState(() {
       xScore = 0;
       oScore = 0;
-      for (int i = 0; i < 9; i++) {
+      for (int i = 0; i < displayElement.length; i++) {
         displayElement[i] = '';
       }
+      filledBoxes = 0;
     });
-    filledBoxes = 0;
   }
 }
