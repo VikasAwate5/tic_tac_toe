@@ -41,7 +41,7 @@ class HomePageHelper {
         ),
       ),
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all<Color>(Colors.lightBlue),
+        backgroundColor: WidgetStateProperty.all<Color>(Colors.blue),
         minimumSize: WidgetStateProperty.all<Size>(Size.infinite),
       ),
     );
