@@ -3,22 +3,22 @@ description: Tic Tac Toe game.
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
-  sdk: ">=3.0.6 <4.0.0"
+  sdk: '>=3.10.8 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.2
+  cupertino_icons: 1.0.9
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^1.0.0
+  flutter_lints: 6.0.0
 
 flutter:
 

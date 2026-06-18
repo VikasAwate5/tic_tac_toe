@@ -18,10 +18,7 @@ class HomePageHelper {
         ),
         Text(
           teamScore.toString(),
-          style: const TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-          ),
+          style: const TextStyle(fontSize: 20, color: Colors.white),
         ),
       ],
     );
@@ -33,16 +30,16 @@ class HomePageHelper {
   }) {
     return ElevatedButton(
       onPressed: clearScoreBoard,
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all<Color>(Colors.blue),
+        minimumSize: WidgetStateProperty.all<Size>(Size.infinite),
+      ),
       child: Text(
         "Clear Score Board",
         style: TextStyle(
           color: Colors.white,
           fontSize: 0.05 * MediaQuery.sizeOf(context).width,
         ),
-      ),
-      style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all<Color>(Colors.blue),
-        minimumSize: WidgetStateProperty.all<Size>(Size.infinite),
       ),
     );
   }
