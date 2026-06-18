@@ -11,7 +11,11 @@ This app focuses on polished UI interactions for local 2-player gameplay:
 
 ## Screenshot
 
-![App Screenshot]()
+
+| Launch| Start Game | Mid Game | Winner|
+|-------|------------|----------|-------|
+|<img width="1200" height="2840" alt="1" src="https://github.com/user-attachments/assets/c9afdb98-39de-4018-b9f2-97af86e3fc6f" />|<img width="1200" height="2840" alt="2" src="https://github.com/user-attachments/assets/84e8d1b6-acb3-4f35-8962-ee84edaa4129" />|<img width="1200" height="2840" alt="3" src="https://github.com/user-attachments/assets/2197c730-b474-4a8f-bc34-c3f2b75390c6" />|<img width="1200" height="2840" alt="4" src="https://github.com/user-attachments/assets/db0de2c7-0bcc-426b-ad64-187f28b5f5fa" />|
+
 
 ## Features
 
