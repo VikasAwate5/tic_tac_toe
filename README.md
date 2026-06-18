@@ -11,7 +11,7 @@ This app focuses on polished UI interactions for local 2-player gameplay:
 
 ## Screenshot
 
-![App Screenshot](https://github.com/user-attachments/assets/bff294d3-e37b-4c33-9748-a19a6ccd544d)
+![App Screenshot]()
 
 ## Features
 
