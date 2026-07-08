@@ -108,7 +108,7 @@ flutter build appbundle
 
 ## Version
 
-Current app version in `pubspec.yaml`: `1.0.0+2`
+Current app version in `pubspec.yaml`: `1.0.0+4`
 
 ## Improvements You Can Add Next
 
