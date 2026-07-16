@@ -29,7 +29,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _pulseController = AnimationController(
       vsync: this,
       duration: DimensConstants.pulseAnimationDuration,
-    )..repeat(reverse: true);
+    )
+      ..repeat(reverse: true);
     _pulseAnimation =
         Tween<double>(
           begin: DimensConstants.pulseScaleStart,
@@ -125,10 +126,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                   decoration: BoxDecoration(
                     color:
-                        (oTurn
-                                ? ColorConstants.playerO
-                                : ColorConstants.playerX)
-                            .withValues(alpha: 0.15),
+                    (oTurn
+                        ? ColorConstants.playerO
+                        : ColorConstants.playerX)
+                        .withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(
                       DimensConstants.turnIndicatorRadius,
                     ),
@@ -143,7 +144,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     oTurn ? "Player O's Turn" : "Player X's Turn",
                     style: TextStyle(
                       fontSize:
-                          size.width * DimensConstants.turnIndicatorFontFactor,
+                      size.width * DimensConstants.turnIndicatorFontFactor,
                       fontWeight: FontWeight.bold,
                       color: oTurn
                           ? ColorConstants.playerO
@@ -181,13 +182,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: DimensConstants.boardCellCount,
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount:
-                                  DimensConstants.boardCrossAxisCount,
-                              crossAxisSpacing:
-                                  DimensConstants.boardGridSpacing,
-                              mainAxisSpacing: DimensConstants.boardGridSpacing,
-                            ),
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                          DimensConstants.boardCrossAxisCount,
+                          crossAxisSpacing:
+                          DimensConstants.boardGridSpacing,
+                          mainAxisSpacing: DimensConstants.boardGridSpacing,
+                        ),
                         itemBuilder: (_, index) => _buildCell(index),
                       ),
                     ),
@@ -219,7 +220,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         fontWeight: FontWeight.bold,
                         color: ColorConstants.white,
                         letterSpacing:
-                            DimensConstants.actionButtonLetterSpacing,
+                        DimensConstants.actionButtonLetterSpacing,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -312,11 +313,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           boxShadow: isWinning
               ? [
-                  BoxShadow(
-                    color: borderColor.withValues(alpha: 0.5),
-                    blurRadius: DimensConstants.winningCellGlowBlur,
-                  ),
-                ]
+            BoxShadow(
+              color: borderColor.withValues(alpha: 0.5),
+              blurRadius: DimensConstants.winningCellGlowBlur,
+            ),
+          ]
               : [],
         ),
         child: Center(
@@ -327,26 +328,26 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             child: value.isEmpty
                 ? const SizedBox.shrink()
                 : Text(
-                    value,
-                    key: ValueKey(value + index.toString()),
-                    style: TextStyle(
-                      fontSize: DimensConstants.markerFontSize,
-                      fontWeight: FontWeight.w900,
-                      color: isX
-                          ? ColorConstants.playerX
-                          : ColorConstants.playerO,
-                      shadows: [
-                        Shadow(
-                          color:
-                              (isX
-                                      ? ColorConstants.playerX
-                                      : ColorConstants.playerO)
-                                  .withValues(alpha: 0.6),
-                          blurRadius: DimensConstants.markerShadowBlur,
-                        ),
-                      ],
-                    ),
+              value,
+              key: ValueKey(value + index.toString()),
+              style: TextStyle(
+                fontSize: DimensConstants.markerFontSize,
+                fontWeight: FontWeight.w900,
+                color: isX
+                    ? ColorConstants.playerX
+                    : ColorConstants.playerO,
+                shadows: [
+                  Shadow(
+                    color:
+                    (isX
+                        ? ColorConstants.playerX
+                        : ColorConstants.playerO)
+                        .withValues(alpha: 0.6),
+                    blurRadius: DimensConstants.markerShadowBlur,
                   ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -376,7 +377,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     ];
 
     for (final line in lines) {
-      final a = line[0], b = line[1], c = line[2];
+      final a = line[0],
+          b = line[1],
+          c = line[2];
       if (displayElement[a] != '' &&
           displayElement[a] == displayElement[b] &&
           displayElement[a] == displayElement[c]) {
@@ -392,96 +395,100 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _showWinDialog(String winner) {
-    if (winner == 'O') {
-      oScore++;
-    } else {
-      xScore++;
-    }
+    /// Update score
+    winner == 'O' ? oScore++ : xScore++;
 
     final isO = winner == 'O';
     final accent = isO ? ColorConstants.playerO : ColorConstants.playerX;
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (_) => Dialog(
-        backgroundColor: ColorConstants.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(DimensConstants.dialogPadding),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [ColorConstants.boardCell, accent.withValues(alpha: 0.3)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(DimensConstants.dialogRadius),
-            border: Border.all(
-              color: accent,
-              width: DimensConstants.dialogBorderWidth,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: accent.withValues(alpha: 0.4),
-                blurRadius: DimensConstants.dialogShadowBlur,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                '🎉',
-                style: TextStyle(fontSize: DimensConstants.dialogEmojiFontSize),
-              ),
-              const SizedBox(height: DimensConstants.dialogTopSpacing),
-              Text(
-                'Player $winner Wins!',
-                style: TextStyle(
-                  fontSize: DimensConstants.dialogTitleFontSize,
-                  fontWeight: FontWeight.w900,
+      builder: (_) =>
+          Dialog(
+            backgroundColor: ColorConstants.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(DimensConstants.dialogPadding),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    ColorConstants.boardCell,
+                    accent.withValues(alpha: 0.3)
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(
+                    DimensConstants.dialogRadius),
+                border: Border.all(
                   color: accent,
+                  width: DimensConstants.dialogBorderWidth,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: accent.withValues(alpha: 0.4),
+                    blurRadius: DimensConstants.dialogShadowBlur,
+                  ),
+                ],
               ),
-              const SizedBox(height: DimensConstants.dialogBodySpacing),
-              Text(
-                'Congratulations!',
-                style: TextStyle(
-                  fontSize: DimensConstants.dialogBodyFontSize,
-                  color: ColorConstants.white70,
-                ),
-              ),
-              const SizedBox(height: DimensConstants.dialogActionTopSpacing),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _clearBoard();
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accent,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: DimensConstants.dialogButtonVerticalPadding,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    '🎉',
+                    style: TextStyle(
+                        fontSize: DimensConstants.dialogEmojiFontSize),
+                  ),
+                  const SizedBox(height: DimensConstants.dialogTopSpacing),
+                  Text(
+                    'Player $winner Wins!',
+                    style: TextStyle(
+                      fontSize: DimensConstants.dialogTitleFontSize,
+                      fontWeight: FontWeight.w900,
+                      color: accent,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        DimensConstants.dialogButtonRadius,
+                  ),
+                  const SizedBox(height: DimensConstants.dialogBodySpacing),
+                  Text(
+                    'Congratulations!',
+                    style: TextStyle(
+                      fontSize: DimensConstants.dialogBodyFontSize,
+                      color: ColorConstants.white70,
+                    ),
+                  ),
+                  const SizedBox(
+                      height: DimensConstants.dialogActionTopSpacing),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _clearBoard();
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: accent,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: DimensConstants.dialogButtonVerticalPadding,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            DimensConstants.dialogButtonRadius,
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'Play Again',
+                        style: TextStyle(
+                          fontSize: DimensConstants.dialogBodyFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: ColorConstants.white,
+                        ),
                       ),
                     ),
                   ),
-                  child: const Text(
-                    'Play Again',
-                    style: TextStyle(
-                      fontSize: DimensConstants.dialogBodyFontSize,
-                      fontWeight: FontWeight.bold,
-                      color: ColorConstants.white,
-                    ),
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -489,88 +496,92 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (_) => Dialog(
-        backgroundColor: ColorConstants.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(DimensConstants.dialogPadding),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [
-                ColorConstants.boardCell,
-                ColorConstants.boardCellBorder,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(DimensConstants.dialogRadius),
-            border: Border.all(
-              color: ColorConstants.primaryPurple,
-              width: DimensConstants.dialogBorderWidth,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: ColorConstants.primaryPurpleGlow,
-                blurRadius: DimensConstants.dialogShadowBlur,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                '🤝',
-                style: TextStyle(fontSize: DimensConstants.dialogEmojiFontSize),
-              ),
-              const SizedBox(height: DimensConstants.dialogTopSpacing),
-              const Text(
-                "It's a Draw!",
-                style: TextStyle(
-                  fontSize: DimensConstants.dialogTitleFontSize,
-                  fontWeight: FontWeight.w900,
-                  color: ColorConstants.white,
+      builder: (_) =>
+          Dialog(
+            backgroundColor: ColorConstants.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(DimensConstants.dialogPadding),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    ColorConstants.boardCell,
+                    ColorConstants.boardCellBorder,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ),
-              const SizedBox(height: DimensConstants.dialogBodySpacing),
-              const Text(
-                'Well played by both!',
-                style: TextStyle(
-                  fontSize: DimensConstants.dialogBodyFontSize,
-                  color: ColorConstants.white70,
+                borderRadius: BorderRadius.circular(
+                    DimensConstants.dialogRadius),
+                border: Border.all(
+                  color: ColorConstants.primaryPurple,
+                  width: DimensConstants.dialogBorderWidth,
                 ),
-              ),
-              const SizedBox(height: DimensConstants.dialogActionTopSpacing),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _clearBoard();
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorConstants.primaryPurple,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: DimensConstants.dialogButtonVerticalPadding,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        DimensConstants.dialogButtonRadius,
-                      ),
-                    ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: ColorConstants.primaryPurpleGlow,
+                    blurRadius: DimensConstants.dialogShadowBlur,
                   ),
-                  child: const Text(
-                    'Play Again',
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    '🤝',
                     style: TextStyle(
-                      fontSize: DimensConstants.dialogBodyFontSize,
-                      fontWeight: FontWeight.bold,
+                        fontSize: DimensConstants.dialogEmojiFontSize),
+                  ),
+                  const SizedBox(height: DimensConstants.dialogTopSpacing),
+                  const Text(
+                    "It's a Draw!",
+                    style: TextStyle(
+                      fontSize: DimensConstants.dialogTitleFontSize,
+                      fontWeight: FontWeight.w900,
                       color: ColorConstants.white,
                     ),
                   ),
-                ),
+                  const SizedBox(height: DimensConstants.dialogBodySpacing),
+                  const Text(
+                    'Well played by both!',
+                    style: TextStyle(
+                      fontSize: DimensConstants.dialogBodyFontSize,
+                      color: ColorConstants.white70,
+                    ),
+                  ),
+                  const SizedBox(
+                      height: DimensConstants.dialogActionTopSpacing),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _clearBoard();
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorConstants.primaryPurple,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: DimensConstants.dialogButtonVerticalPadding,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            DimensConstants.dialogButtonRadius,
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'Play Again',
+                        style: TextStyle(
+                          fontSize: DimensConstants.dialogBodyFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: ColorConstants.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
