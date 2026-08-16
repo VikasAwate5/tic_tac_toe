@@ -29,8 +29,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _pulseController = AnimationController(
       vsync: this,
       duration: DimensConstants.pulseAnimationDuration,
-    )
-      ..repeat(reverse: true);
+    )..repeat(reverse: true);
     _pulseAnimation =
         Tween<double>(
           begin: DimensConstants.pulseScaleStart,
@@ -49,6 +48,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
+    final orientation = MediaQuery.orientationOf(context);
+    final baseDimension = size.shortestSide;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -63,183 +65,206 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              // ── Title ──────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: DimensConstants.titleVerticalPadding,
-                ),
-                child: Text(
-                  'Tic Tac Toe',
-                  style: TextStyle(
-                    fontSize: size.width * DimensConstants.titleFontFactor,
-                    fontWeight: FontWeight.w900,
-                    color: ColorConstants.white,
-                    letterSpacing: DimensConstants.titleLetterSpacing,
-                    shadows: const [
-                      Shadow(
-                        color: ColorConstants.primaryPurple,
-                        blurRadius: DimensConstants.titleShadowBlur,
-                        offset: Offset(0, DimensConstants.titleShadowOffsetY),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // ── Score Board ───────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: DimensConstants.scoreHorizontalPadding,
-                ),
-                child: Row(
+          child: orientation == Orientation.portrait
+              ? Column(
                   children: [
+                    _buildTitle(baseDimension),
+                    _buildScoreBoard(),
+                    const SizedBox(height: DimensConstants.sectionSpacingSmall),
+                    _buildTurnIndicator(baseDimension),
+                    const SizedBox(
+                      height: DimensConstants.sectionSpacingMedium,
+                    ),
                     Expanded(
-                      child: _buildScoreCard(
-                        'Player X',
-                        xScore,
-                        ColorConstants.playerX,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DimensConstants.boardHorizontalPadding,
+                        ),
+                        child: Center(child: _buildGrid()),
                       ),
                     ),
-                    const SizedBox(width: DimensConstants.scoreCardGap),
+                    const SizedBox(
+                      height: DimensConstants.sectionSpacingMedium,
+                    ),
+                    _buildResetButton(),
+                    const SizedBox(
+                      height: DimensConstants.scoreHorizontalPadding,
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
                     Expanded(
-                      child: _buildScoreCard(
-                        'Player O',
-                        oScore,
-                        ColorConstants.playerO,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: DimensConstants.value20,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildTitle(baseDimension),
+                            _buildScoreBoard(),
+                            const SizedBox(
+                              height: DimensConstants.sectionSpacingSmall,
+                            ),
+                            _buildTurnIndicator(baseDimension),
+                            const SizedBox(
+                              height: DimensConstants.sectionSpacingMedium,
+                            ),
+                            _buildResetButton(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(
+                          DimensConstants.boardHorizontalPadding,
+                        ),
+                        child: Center(child: _buildGrid()),
                       ),
                     ),
                   ],
                 ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitle(double baseDimension) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: DimensConstants.titleVerticalPadding,
+      ),
+      child: Text(
+        'Tic Tac Toe',
+        style: TextStyle(
+          fontSize: baseDimension * DimensConstants.titleFontFactor,
+          fontWeight: FontWeight.w900,
+          color: ColorConstants.white,
+          letterSpacing: DimensConstants.titleLetterSpacing,
+          shadows: const [
+            Shadow(
+              color: ColorConstants.primaryPurple,
+              blurRadius: DimensConstants.titleShadowBlur,
+              offset: Offset(0, DimensConstants.titleShadowOffsetY),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScoreBoard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DimensConstants.scoreHorizontalPadding,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildScoreCard('Player X', xScore, ColorConstants.playerX),
+          ),
+          const SizedBox(width: DimensConstants.scoreCardGap),
+          Expanded(
+            child: _buildScoreCard('Player O', oScore, ColorConstants.playerO),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTurnIndicator(double baseDimension) {
+    return ScaleTransition(
+      scale: _pulseAnimation,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: DimensConstants.turnIndicatorHorizontalPadding,
+          vertical: DimensConstants.turnIndicatorVerticalPadding,
+        ),
+        decoration: BoxDecoration(
+          color: (oTurn ? ColorConstants.playerO : ColorConstants.playerX)
+              .withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(
+            DimensConstants.turnIndicatorRadius,
+          ),
+          border: Border.all(
+            color: oTurn ? ColorConstants.playerO : ColorConstants.playerX,
+            width: DimensConstants.turnIndicatorBorderWidth,
+          ),
+        ),
+        child: Text(
+          oTurn ? "Player O's Turn" : "Player X's Turn",
+          style: TextStyle(
+            fontSize: baseDimension * DimensConstants.turnIndicatorFontFactor,
+            fontWeight: FontWeight.bold,
+            color: oTurn ? ColorConstants.playerO : ColorConstants.playerX,
+            letterSpacing: DimensConstants.turnIndicatorLetterSpacing,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGrid() {
+    return AspectRatio(
+      aspectRatio: DimensConstants.boardAspectRatio,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(DimensConstants.boardRadius),
+          boxShadow: const [
+            BoxShadow(
+              color: ColorConstants.primaryPurpleGlow,
+              blurRadius: DimensConstants.boardGlowBlur,
+              spreadRadius: DimensConstants.boardGlowSpread,
+            ),
+          ],
+        ),
+        child: GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: DimensConstants.boardCellCount,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: DimensConstants.boardCrossAxisCount,
+            crossAxisSpacing: DimensConstants.boardGridSpacing,
+            mainAxisSpacing: DimensConstants.boardGridSpacing,
+          ),
+          itemBuilder: (_, index) => _buildCell(index),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResetButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DimensConstants.scoreHorizontalPadding,
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: _clearScoreBoard,
+          icon: const Icon(Icons.refresh_rounded, color: ColorConstants.white),
+          label: const Text(
+            'Reset All',
+            style: TextStyle(
+              fontSize: DimensConstants.actionButtonFontSize,
+              fontWeight: FontWeight.bold,
+              color: ColorConstants.white,
+              letterSpacing: DimensConstants.actionButtonLetterSpacing,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: ColorConstants.primaryPurple,
+            padding: const EdgeInsets.symmetric(
+              vertical: DimensConstants.actionButtonVerticalPadding,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                DimensConstants.actionButtonRadius,
               ),
-
-              const SizedBox(height: DimensConstants.sectionSpacingSmall),
-
-              // ── Turn Indicator ────────────────────────────────────
-              ScaleTransition(
-                scale: _pulseAnimation,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: DimensConstants.turnIndicatorHorizontalPadding,
-                    vertical: DimensConstants.turnIndicatorVerticalPadding,
-                  ),
-                  decoration: BoxDecoration(
-                    color:
-                    (oTurn
-                        ? ColorConstants.playerO
-                        : ColorConstants.playerX)
-                        .withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(
-                      DimensConstants.turnIndicatorRadius,
-                    ),
-                    border: Border.all(
-                      color: oTurn
-                          ? ColorConstants.playerO
-                          : ColorConstants.playerX,
-                      width: DimensConstants.turnIndicatorBorderWidth,
-                    ),
-                  ),
-                  child: Text(
-                    oTurn ? "Player O's Turn" : "Player X's Turn",
-                    style: TextStyle(
-                      fontSize:
-                      size.width * DimensConstants.turnIndicatorFontFactor,
-                      fontWeight: FontWeight.bold,
-                      color: oTurn
-                          ? ColorConstants.playerO
-                          : ColorConstants.playerX,
-                      letterSpacing: DimensConstants.turnIndicatorLetterSpacing,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: DimensConstants.sectionSpacingMedium),
-
-              // ── Game Grid ─────────────────────────────────────────
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: DimensConstants.boardHorizontalPadding,
-                  ),
-                  child: AspectRatio(
-                    aspectRatio: DimensConstants.boardAspectRatio,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          DimensConstants.boardRadius,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: ColorConstants.primaryPurpleGlow,
-                            blurRadius: DimensConstants.boardGlowBlur,
-                            spreadRadius: DimensConstants.boardGlowSpread,
-                          ),
-                        ],
-                      ),
-                      child: GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: DimensConstants.boardCellCount,
-                        gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount:
-                          DimensConstants.boardCrossAxisCount,
-                          crossAxisSpacing:
-                          DimensConstants.boardGridSpacing,
-                          mainAxisSpacing: DimensConstants.boardGridSpacing,
-                        ),
-                        itemBuilder: (_, index) => _buildCell(index),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: DimensConstants.sectionSpacingMedium),
-
-              // ── Reset Button ──────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: DimensConstants.scoreHorizontalPadding,
-                  left: DimensConstants.scoreHorizontalPadding,
-                  right: DimensConstants.scoreHorizontalPadding,
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: _clearScoreBoard,
-                    icon: const Icon(
-                      Icons.refresh_rounded,
-                      color: ColorConstants.white,
-                    ),
-                    label: const Text(
-                      'Reset All',
-                      style: TextStyle(
-                        fontSize: DimensConstants.actionButtonFontSize,
-                        fontWeight: FontWeight.bold,
-                        color: ColorConstants.white,
-                        letterSpacing:
-                        DimensConstants.actionButtonLetterSpacing,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorConstants.primaryPurple,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: DimensConstants.actionButtonVerticalPadding,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          DimensConstants.actionButtonRadius,
-                        ),
-                      ),
-                      elevation: DimensConstants.actionButtonElevation,
-                      shadowColor: ColorConstants.primaryPurpleShadow,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
+            elevation: DimensConstants.actionButtonElevation,
+            shadowColor: ColorConstants.primaryPurpleShadow,
           ),
         ),
       ),
@@ -313,11 +338,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           boxShadow: isWinning
               ? [
-            BoxShadow(
-              color: borderColor.withValues(alpha: 0.5),
-              blurRadius: DimensConstants.winningCellGlowBlur,
-            ),
-          ]
+                  BoxShadow(
+                    color: borderColor.withValues(alpha: 0.5),
+                    blurRadius: DimensConstants.winningCellGlowBlur,
+                  ),
+                ]
               : [],
         ),
         child: Center(
@@ -328,26 +353,26 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             child: value.isEmpty
                 ? const SizedBox.shrink()
                 : Text(
-              value,
-              key: ValueKey(value + index.toString()),
-              style: TextStyle(
-                fontSize: DimensConstants.markerFontSize,
-                fontWeight: FontWeight.w900,
-                color: isX
-                    ? ColorConstants.playerX
-                    : ColorConstants.playerO,
-                shadows: [
-                  Shadow(
-                    color:
-                    (isX
-                        ? ColorConstants.playerX
-                        : ColorConstants.playerO)
-                        .withValues(alpha: 0.6),
-                    blurRadius: DimensConstants.markerShadowBlur,
+                    value,
+                    key: ValueKey(value + index.toString()),
+                    style: TextStyle(
+                      fontSize: DimensConstants.markerFontSize,
+                      fontWeight: FontWeight.w900,
+                      color: isX
+                          ? ColorConstants.playerX
+                          : ColorConstants.playerO,
+                      shadows: [
+                        Shadow(
+                          color:
+                              (isX
+                                      ? ColorConstants.playerX
+                                      : ColorConstants.playerO)
+                                  .withValues(alpha: 0.6),
+                          blurRadius: DimensConstants.markerShadowBlur,
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
           ),
         ),
       ),
@@ -377,9 +402,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     ];
 
     for (final line in lines) {
-      final a = line[0],
-          b = line[1],
-          c = line[2];
+      final a = line[0], b = line[1], c = line[2];
       if (displayElement[a] != '' &&
           displayElement[a] == displayElement[b] &&
           displayElement[a] == displayElement[c]) {
@@ -403,92 +426,85 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (_) =>
-          Dialog(
-            backgroundColor: ColorConstants.transparent,
-            child: Container(
-              padding: const EdgeInsets.all(DimensConstants.dialogPadding),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    ColorConstants.boardCell,
-                    accent.withValues(alpha: 0.3)
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(
-                    DimensConstants.dialogRadius),
-                border: Border.all(
-                  color: accent,
-                  width: DimensConstants.dialogBorderWidth,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: accent.withValues(alpha: 0.4),
-                    blurRadius: DimensConstants.dialogShadowBlur,
-                  ),
-                ],
+      builder: (_) => Dialog(
+        backgroundColor: ColorConstants.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(DimensConstants.dialogPadding),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [ColorConstants.boardCell, accent.withValues(alpha: 0.3)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(DimensConstants.dialogRadius),
+            border: Border.all(
+              color: accent,
+              width: DimensConstants.dialogBorderWidth,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: accent.withValues(alpha: 0.4),
+                blurRadius: DimensConstants.dialogShadowBlur,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    '🎉',
-                    style: TextStyle(
-                        fontSize: DimensConstants.dialogEmojiFontSize),
-                  ),
-                  const SizedBox(height: DimensConstants.dialogTopSpacing),
-                  Text(
-                    'Player $winner Wins!',
-                    style: TextStyle(
-                      fontSize: DimensConstants.dialogTitleFontSize,
-                      fontWeight: FontWeight.w900,
-                      color: accent,
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '🎉',
+                style: TextStyle(fontSize: DimensConstants.dialogEmojiFontSize),
+              ),
+              const SizedBox(height: DimensConstants.dialogTopSpacing),
+              Text(
+                'Player $winner Wins!',
+                style: TextStyle(
+                  fontSize: DimensConstants.dialogTitleFontSize,
+                  fontWeight: FontWeight.w900,
+                  color: accent,
+                ),
+              ),
+              const SizedBox(height: DimensConstants.dialogBodySpacing),
+              Text(
+                'Congratulations!',
+                style: TextStyle(
+                  fontSize: DimensConstants.dialogBodyFontSize,
+                  color: ColorConstants.white70,
+                ),
+              ),
+              const SizedBox(height: DimensConstants.dialogActionTopSpacing),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    _clearBoard();
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accent,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: DimensConstants.dialogButtonVerticalPadding,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        DimensConstants.dialogButtonRadius,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: DimensConstants.dialogBodySpacing),
-                  Text(
-                    'Congratulations!',
+                  child: const Text(
+                    'Play Again',
                     style: TextStyle(
                       fontSize: DimensConstants.dialogBodyFontSize,
-                      color: ColorConstants.white70,
+                      fontWeight: FontWeight.bold,
+                      color: ColorConstants.white,
                     ),
                   ),
-                  const SizedBox(
-                      height: DimensConstants.dialogActionTopSpacing),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _clearBoard();
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: accent,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: DimensConstants.dialogButtonVerticalPadding,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            DimensConstants.dialogButtonRadius,
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        'Play Again',
-                        style: TextStyle(
-                          fontSize: DimensConstants.dialogBodyFontSize,
-                          fontWeight: FontWeight.bold,
-                          color: ColorConstants.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
+        ),
+      ),
     );
   }
 
@@ -496,92 +512,88 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (_) =>
-          Dialog(
-            backgroundColor: ColorConstants.transparent,
-            child: Container(
-              padding: const EdgeInsets.all(DimensConstants.dialogPadding),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    ColorConstants.boardCell,
-                    ColorConstants.boardCellBorder,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(
-                    DimensConstants.dialogRadius),
-                border: Border.all(
-                  color: ColorConstants.primaryPurple,
-                  width: DimensConstants.dialogBorderWidth,
-                ),
-                boxShadow: const [
-                  BoxShadow(
-                    color: ColorConstants.primaryPurpleGlow,
-                    blurRadius: DimensConstants.dialogShadowBlur,
-                  ),
-                ],
+      builder: (_) => Dialog(
+        backgroundColor: ColorConstants.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(DimensConstants.dialogPadding),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [
+                ColorConstants.boardCell,
+                ColorConstants.boardCellBorder,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(DimensConstants.dialogRadius),
+            border: Border.all(
+              color: ColorConstants.primaryPurple,
+              width: DimensConstants.dialogBorderWidth,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: ColorConstants.primaryPurpleGlow,
+                blurRadius: DimensConstants.dialogShadowBlur,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    '🤝',
-                    style: TextStyle(
-                        fontSize: DimensConstants.dialogEmojiFontSize),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '🤝',
+                style: TextStyle(fontSize: DimensConstants.dialogEmojiFontSize),
+              ),
+              const SizedBox(height: DimensConstants.dialogTopSpacing),
+              const Text(
+                "It's a Draw!",
+                style: TextStyle(
+                  fontSize: DimensConstants.dialogTitleFontSize,
+                  fontWeight: FontWeight.w900,
+                  color: ColorConstants.white,
+                ),
+              ),
+              const SizedBox(height: DimensConstants.dialogBodySpacing),
+              const Text(
+                'Well played by both!',
+                style: TextStyle(
+                  fontSize: DimensConstants.dialogBodyFontSize,
+                  color: ColorConstants.white70,
+                ),
+              ),
+              const SizedBox(height: DimensConstants.dialogActionTopSpacing),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    _clearBoard();
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorConstants.primaryPurple,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: DimensConstants.dialogButtonVerticalPadding,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        DimensConstants.dialogButtonRadius,
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: DimensConstants.dialogTopSpacing),
-                  const Text(
-                    "It's a Draw!",
+                  child: const Text(
+                    'Play Again',
                     style: TextStyle(
-                      fontSize: DimensConstants.dialogTitleFontSize,
-                      fontWeight: FontWeight.w900,
+                      fontSize: DimensConstants.dialogBodyFontSize,
+                      fontWeight: FontWeight.bold,
                       color: ColorConstants.white,
                     ),
                   ),
-                  const SizedBox(height: DimensConstants.dialogBodySpacing),
-                  const Text(
-                    'Well played by both!',
-                    style: TextStyle(
-                      fontSize: DimensConstants.dialogBodyFontSize,
-                      color: ColorConstants.white70,
-                    ),
-                  ),
-                  const SizedBox(
-                      height: DimensConstants.dialogActionTopSpacing),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _clearBoard();
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorConstants.primaryPurple,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: DimensConstants.dialogButtonVerticalPadding,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            DimensConstants.dialogButtonRadius,
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        'Play Again',
-                        style: TextStyle(
-                          fontSize: DimensConstants.dialogBodyFontSize,
-                          fontWeight: FontWeight.bold,
-                          color: ColorConstants.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
+        ),
+      ),
     );
   }
 

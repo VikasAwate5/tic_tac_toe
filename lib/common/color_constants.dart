@@ -21,4 +21,3 @@ class ColorConstants {
   static const Color white70 = Colors.white70;
   static const Color transparent = Colors.transparent;
 }
-
